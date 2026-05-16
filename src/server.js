@@ -1,9 +1,16 @@
-require("dotenv").config(); //loads variables from env to process.env
+const app = require("./app");
+const env = require("./config/env");
+const { ensureBucketExists } = require("./config/s3");
 
-const app = require("./app"); //import the express app we created in app.js
+async function startServer() {
+  await ensureBucketExists();
 
-const PORT = process.env.PORT || 5000;
+  app.listen(env.port, () => {
+    console.log(`API running on port ${env.port}`);
+  });
+}
 
-app.listen(PORT, () => {
-  console.log(`API running on port ${PORT}`);
+startServer().catch((error) => {
+  console.error("Failed to start server:", error);
+  process.exit(1);
 });

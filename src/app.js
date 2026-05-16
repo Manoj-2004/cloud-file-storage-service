@@ -1,7 +1,8 @@
 const express = require("express");
 const authRoutes = require("./modules/auth/auth.routes");
-const errorMiddleware = require("./middleware/error.middleware");
+const fileRoutes = require("./modules/files/file.routes");
 const authMiddleware = require("./middleware/auth.middleware");
+const errorMiddleware = require("./middleware/error.middleware");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.get("/api/me", authMiddleware, (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/files", fileRoutes);
 
 app.use(errorMiddleware);
 
