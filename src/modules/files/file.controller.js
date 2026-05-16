@@ -17,11 +17,14 @@ exports.uploadFile = asyncHandler(async (req, res) => {
 });
 
 exports.listFiles = asyncHandler(async (req, res) => {
-  const files = await fileService.listFiles(req.user.id);
+  const { page, limit } = req.validated.query;
+
+  const result = await fileService.listFiles(req.user.id, page, limit);
 
   res.json({
     success: true,
-    data: files
+    data: result.files,
+    pagination: result.pagination
   });
 });
 

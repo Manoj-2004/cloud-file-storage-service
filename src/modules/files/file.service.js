@@ -84,15 +84,36 @@ exports.uploadFile = async (userId, file) => {
   return savedFile;
 };
 
-exports.listFiles = async (userId) => { //This returns only files owned by the logged-in user.
-  return prisma.file.findMany({
-    where: {
-      userId
-    },
-    orderBy: {
-      createdAt: "desc"
+exports.listFiles = async (userId, page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
+
+  const [files, total] = await Promise.all([
+    prisma.file.findMany({
+      where: {
+        userId
+      },
+      orderBy: {
+        createdAt: "desc"
+      },
+      skip,
+      take: limit
+    }),
+    prisma.file.count({
+      where: {
+        userId
+      }
+    })
+  ]);
+
+  return {
+    files,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit)
     }
-  });
+  };
 };
 
 exports.getDownloadUrl = async (userId, fileId) => {
